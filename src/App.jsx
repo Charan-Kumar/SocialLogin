@@ -13,7 +13,7 @@ import {
 } from 'react-social-login-buttons';
 import { User } from './User';
 
-const REDIRECT_URI = 'http://localhost:5173/account/login'
+const REDIRECT_URI = 'https://social-login-jade.vercel.app'
 
 function App() {
   const [provider, setProvider] = useState('');
