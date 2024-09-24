@@ -12,8 +12,11 @@ import {
   LinkedInLoginButton,
 } from 'react-social-login-buttons';
 import { User } from './User';
+import axios from 'axios';
+import GoogleOAuth from './GoogleOAuth';
+import LinkedInOAuth from './LinkedInOAuth';
 
-const REDIRECT_URI = 'https://social-login-jade.vercel.app'
+const REDIRECT_URI = import.meta.env.VITE_APP_REDIRECT_URL || 'http://localhost:5173/account/login'
 
 function App() {
   const [provider, setProvider] = useState('');
@@ -30,10 +33,8 @@ function App() {
   }, []);
 
   const onLogout = useCallback(() => {
-    setProfile(null);
-    setProvider('');
-    alert('logout success');
-  }, []);
+    onLogoutSuccess()
+  }, [onLogoutSuccess]);
 
 
   return (
@@ -51,6 +52,8 @@ function App() {
           onLogoutSuccess={onLogoutSuccess}
           redirect_uri={REDIRECT_URI}
           onResolve={({ provider, data }) => {
+
+
             setProvider(provider);
             setProfile(data);
             console.log(data)
@@ -71,6 +74,17 @@ function App() {
           discoveryDocs="claims_supported"
           access_type="offline"
           onResolve={({ provider, data }) => {
+            debugger;
+            axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${data.code}`, {
+                        headers: {
+                            Authorization: `Bearer ${data.code}`,
+                            Accept: 'application/json'
+                        }
+                    })
+                    .then((res) => {
+                        setProfile(res.data);
+                    })
+                    .catch((err) => console.log(err));
 
             setProvider(provider);
             setProfile(data);
@@ -103,8 +117,7 @@ function App() {
           <LinkedInLoginButton />
         </LoginSocialLinkedin>
 
-
-
+        <GoogleOAuth />
 
       </div>
       }
